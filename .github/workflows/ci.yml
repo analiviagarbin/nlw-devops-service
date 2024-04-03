@@ -31,4 +31,6 @@ jobs:
 
     - name: Push image
       run: |
-        docker push analiviagarbin/nlw-devops-service:${{ steps.generate_sha.outputs.sha }} 
+        docker push analiviagarbin/nlw-devops-service:${{ steps.generate_sha.outputs.sha }}
+        docker tag analiviagarbin/nlw-devops-service:${{ steps.generate_sha.outputs.sha }} analiviagarbin/nlw-devops-service:latest
+        docker push analiviagarbin/nlw-devops-service:latest
