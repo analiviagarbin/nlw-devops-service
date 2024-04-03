@@ -1,0 +1,44 @@
+version: '3.7'
+
+services:
+
+  postgres:
+    image: postgres:16.2-alpine3.19
+    container_name: db-pass-in
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=passin
+    volumes:
+      - 'db:/var/lib/postgresql/data'
+    networks:
+      - passin
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d passin"]
+      interval: 3s
+      retries: 5
+      timeout: 5s
+
+  api-pass-in:
+    build:
+      context: .
+    container_name: api-pass-in
+    ports:
+      - 3001:3333
+    environment:
+      - DATABASE_URL=postgresql://admin:admin@postgres:5432/passin
+      - API_BASE_URL=http://localhost:3333
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - passin
+    
+networks:
+  passin:
+    driver: bridge
+
+volumes:
+  db:
